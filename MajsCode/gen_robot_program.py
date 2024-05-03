@@ -11,7 +11,7 @@ PERS wobjdata handpos:= [FALSE,TRUE,"",[[-400,0,250],[1,0,0,0]],[[0,0,0],[1,0,0,
         ConfL\\Off;
         SingArea\\Wrist;
         !Startpos
-        MoveAbsJ [[0.441359,-16.418,10.8814,2.79121,60.2034,-14.3875],[168.362,9E+09,9E+09,9E+09,9E+09,9E+09]] \NoEOffs, v1000, fine, wi_tGripper;
+        MoveAbsJ [[0.441359,-16.418,10.8814,2.79121,60.2034,-14.3875],[168.362,9E+09,9E+09,9E+09,9E+09,9E+09]] \\NoEOffs, v1000, fine, wi_tGripper;
         path;
     ENDPROC
     PROC path()

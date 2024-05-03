@@ -7,3 +7,6 @@
 #do this for each points and frames
 
 #spit out list of directional vectors
+
+#As a move argument we give:
+#dir from hand to marker, 

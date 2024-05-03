@@ -53,7 +53,7 @@ def angle_between_vectors(v1, v2):
     return angle_rad
 
 #returns four quaternions describing the hands rotation
-def rotation_quaternion(lm0, lm5, lm17):
+def hand_quaternion(lm0, lm5, lm17):
     
     #find the durrecnt dVec of the hand
     dVec=dirVec(centroid(lm0,lm5,lm17))
@@ -96,7 +96,7 @@ def main():
     print("Centroid:", centroid_point)
 
     # Test rotation_quaternion function
-    rotation = rotation_quaternion(lm0, lm5, lm17)
+    rotation = hand_quaternion(lm0, lm5, lm17)
     print("Rotation quaternion:", rotation)
 
     
