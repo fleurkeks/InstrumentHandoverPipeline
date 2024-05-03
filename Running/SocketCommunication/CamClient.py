@@ -1,11 +1,20 @@
 from multiprocessing.connection import Client
+from queue import Queue
 
+#innan vi skickar positionerna till robotern transformera vi de relativt kameran
+#rob2hand=matrix multiplcation rob2cam@cam2hand
 
+#logga tidigare positioner och smootha innan man skicker live
 address = ('localhost', 6000)
 conn = Client(address, authkey=b'secret password')
-msg=[[500,-100,500],[0,-0.707106781,0.707106781,0]],[[0,0,0],[1,0,0,0]]
+Hand_q = Queue()
+
+
+
+#hämtar data fran cameran och hantera 
+hand_array=[[22,0,0],[5,0,0,0]]
+
+
 conn.send(msg)
 
-#can also send arbitrary objects:
-#conn.send(['a', 2.5, None, int, sum])
-#conn.close()
+#add a connection to the camera

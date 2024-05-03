@@ -24,6 +24,4 @@ MODULE MainModule
 	ENDPROC
 
 
-
-
 ENDMODULE

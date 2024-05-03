@@ -6,4 +6,4 @@
 
 #do this for each points and frames
 
-# spit out list of directional vectors
+#spit out list of directional vectors

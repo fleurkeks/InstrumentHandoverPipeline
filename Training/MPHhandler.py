@@ -1,13 +1,5 @@
 #using the palm landmarks we calculated the rotation relative to the directional vector (0,0,1). we also extract a pVec given 3 points
 
-
-###############TODO#############
-#pVec
-
-#rotation in terms of a dVec and phi
-
-#quaterion rotation? or have this in robo
-
 import numpy as np
 from pyquaternion import Quaternion
 
@@ -34,10 +26,9 @@ def centroid(p1, p2, p3):
 def dirVec(point):
     if isinstance(point, list):
         point = np.asarray(point)
-
     mag = np.linalg.norm(point)
-    normalized_vector = point / mag
 
+    normalized_vector = point / mag
     return normalized_vector
 
 def is_null_vector(vector):
@@ -91,7 +82,8 @@ def rotation_quaternion(lm0, lm5, lm17):
     q = Quaternion(axis = axis_of_rotation, angle = angle_of_rotation)
     return q
 
-
+def quatToMatrix(q):
+    return Quaternion.quat2mat(q)
 
 def main():
     # Example data

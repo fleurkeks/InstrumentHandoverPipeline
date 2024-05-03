@@ -14,8 +14,7 @@ def cam_listenener(q):
         msg = conn.recv()
         print(msg)
 
-        #TODO
-        #convert from landmarks into pVec and Rvec
+        
         
         q.put(msg)
         conn.close()
@@ -39,8 +38,7 @@ def send2robot(q):
                 print("trying to connect")
         while True:
             cmd = q.get()
-            serialized_cmd = pickle.dumps(cmd)
-            s.send(bytes(str(serialized_cmd), 'utf-8'))
+            s.send(bytes(str(cmd), 'utf-8'))
             
           
         
