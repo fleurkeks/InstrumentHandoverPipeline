@@ -1,4 +1,4 @@
-MODULE MainModule
+MODULE CameraTask
 	VAR socketdev serversocket;
 	VAR socketdev clientsocket;
     
@@ -7,8 +7,6 @@ MODULE MainModule
 	PERS wobjdata campos:= [FALSE,TRUE,"",[[0,0,0],[0,0,0,0]],[[0,0,0],[0,0,0,0]]];
 
 	
-
-
 	PROC main()
         TPWrite "hej";
         
