@@ -36,6 +36,9 @@ def getdata(filename):
             position = list(map(float, datapoint[1:]))
             tMarker = position[0:3]
             quatMarker = position[3:7]
+
+            #######################to do 
+            #fix correct difference
             
             tHand=position[7:10]
             quatHand=position[10:14]
@@ -54,6 +57,11 @@ def getdata(filename):
             data.append((tvec, quat))
 
     return data
+
+###################################TODO##################
+#smoothe data
+#filter data
+
 
 def gencode(traj):
     declarations = []
