@@ -1,7 +1,9 @@
 #using the palm landmarks we calculated the rotation relative to the directional vector (0,0,1). we also extract a pVec given 3 points
+#includes functions for switching between quat, TMatrix and tvecs
 
 import numpy as np
 from pyquaternion import Quaternion
+from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
 
 #returns vector from p1 to p2 as an array
 def PointToVec(p1, p2):
@@ -82,8 +84,17 @@ def hand_quaternion(lm0, lm5, lm17):
     q = Quaternion(axis = axis_of_rotation, angle = angle_of_rotation)
     return q
 
+#goes from quaternion represenation to a translation matrix
 def quatToMatrix(q):
     return Quaternion.quat2mat(q)
+
+
+#takes Translation matrix and expresses it in form of tvec and rvec
+def Matrix2vec(matrix):
+    tvec = matrix[0:3, -1]
+    R = matrix[0:3, 0:3]
+    rvec = mat2euler(R)
+    return tvec, rvec
 
 def main():
     # Example data

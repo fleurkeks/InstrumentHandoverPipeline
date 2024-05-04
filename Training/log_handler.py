@@ -1,1 +1,0 @@
-#takes our logfile and converts landmarks to coordinates

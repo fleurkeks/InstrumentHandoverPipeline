@@ -24,7 +24,10 @@ ENDMODULE
 
 #read a trajectory from file
 #trajectory format: (marker.x marker.y marker.z marker.q1 marker.q2 marker.q3 marker.q4 hand.x hand.y hand.z hand.q1 hand.q2 hand.q3 hand.q4)
+#reads file that is in quaternion format
 
+#during non-live tracking we can assume the hand is fixed so we are only feeding the vectors (dvec and quaternions) that describe the movement between marker and hand 
+#as given by our trajectory file
 def getdata(filename):
     data = []
     with open(filename) as fn:
@@ -34,33 +37,12 @@ def getdata(filename):
             frame = int(datapoint[0])
             
             position = list(map(float, datapoint[1:]))
-            tMarker = position[0:3]
-            quatMarker = position[3:7]
+            dvec = position[0:3]
+            quat = position[3:7]
 
-            #######################to do 
-            #fix correct difference
-            
-            tHand=position[7:10]
-            quatHand=position[10:14]
-        
-
-            tHand=np.array(tHand)
-            quatHand=np.array(quatHand)
-
-            #translation from hand to marker
-            tvec=tMarker-tHand
-            
-            #rotation from hand to marker
-            quat=quatMarker-quatHand
-          
-            #calculate the difference from hand to marker, append to our data
-            data.append((tvec, quat))
+            data.append((dvec, quat))
 
     return data
-
-###################################TODO##################
-#smoothe data
-#filter data
 
 
 def gencode(traj):
@@ -87,7 +69,6 @@ def main():
         code_str = '\n'.join(program)
         f.write(code_str)
     
-
 
 
 if __name__ == "__main__":
