@@ -3,7 +3,7 @@
 
 import numpy as np
 from pyquaternion import Quaternion
-from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
+from transforms3d.euler import (mat2euler, euler2quat, euler2mat, quat2mat)
 
 #returns vector from p1 to p2 as an array
 def PointToVec(p1, p2):
@@ -86,7 +86,7 @@ def hand_quaternion(lm0, lm5, lm17):
 
 #goes from quaternion represenation to a translation matrix
 def quatToMatrix(q):
-    return Quaternion.quat2mat(q)
+    return quat2mat(q)
 
 
 #takes Translation matrix and expresses it in form of tvec and rvec
