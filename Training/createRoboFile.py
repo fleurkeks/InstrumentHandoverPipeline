@@ -49,7 +49,8 @@ def gencode(traj):
     declarations = []
     motions = []
     for i, (tvec, q) in enumerate(traj):
-        x, y, z = 1000 * tvec[0],  1000 * tvec[1],  1000 * tvec[2] #converting to mm
+        #data is converted into mm which the robot uses
+        x, y, z = 1000 * tvec[0],  1000 * tvec[1],  1000 * tvec[2] 
         # Double check the order of the quaternion!!!
         # Change the elbow angle?
         decl = f'VAR robtarget t{i} := [[{x}, {y}, {z}], [0, -1, 0, 0], [0,0,-1,4], [-96,9E+09,9E+09,9E+09,9E+09,9E+09]];'

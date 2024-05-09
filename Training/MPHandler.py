@@ -74,7 +74,7 @@ def hand_quaternion(lm0, lm5, lm17):
          #check if the axis of rotation is 0, that would mean no rotation has happened --> return identity quaternion
         if(is_null_vector(axis_of_rotation)):
             return Quaternion(1, 0, 0, 0)
-    print(axis_of_rotation)
+    
 
    
     #find the angle of rotation by finding the angle between original orientation and current orientation
