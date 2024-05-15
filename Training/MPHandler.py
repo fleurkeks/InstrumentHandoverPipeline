@@ -58,27 +58,29 @@ def angle_between_vectors(v1, v2):
 #returns four quaternions describing the hands rotation
 def hand_quaternion(lm0, lm5, lm17):
     
-    #find the durrecnt dVec of the hand
-    dVec=dirVec(centroid(lm0,lm5,lm17))
-    #print(dVec)
+    v1=PointToVec(lm0,lm5)
+    v2=PointToVec(lm0,lm17)
 
-    #in the original position the normal vector of the hand will be (0,-1,0)
-    #this is our initial position where the hand points straight upward
+    #normalen till handplan, lokal koordinater
+    n=np.cross(v1,v2)
+
+    #find rotation relative to the z axis pointing, pointing away from cam
     ogRot=np.array((0,0,1))
 
-    if(are_antiparallel(ogRot,dVec)):
-        axis_of_rotation=(0,-1,0)
+    #check 
+    if(are_antiparallel(ogRot,n)):
+        axis_of_rotation=(0,1,0)
     
     #calculate the normal to the original dirVec of the hand and the current dirVec of the hand, that gives the axis of rotation
     else:
-        axis_of_rotation=np.cross(ogRot,dVec)
+        axis_of_rotation=np.cross(ogRot,n)
          #check if the axis of rotation is 0, that would mean no rotation has happened --> return identity quaternion
         if(is_null_vector(axis_of_rotation)):
             return Quaternion(1, 0, 0, 0)
     
 
     #find the angle of rotation by finding the angle between original orientation and current orientation
-    angle_of_rotation=angle_between_vectors(ogRot,dVec)
+    angle_of_rotation=angle_between_vectors(ogRot,n)
 
     #using this we can easly calculate the rotation in quaternions
     q = Quaternion(axis = axis_of_rotation, angle = angle_of_rotation)
