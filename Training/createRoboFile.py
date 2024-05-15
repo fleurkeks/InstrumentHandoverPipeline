@@ -63,7 +63,7 @@ def gencode(traj):
     return s
 
 def main():
-    traj = getdata("Training\hand_positions.txt")
+    traj = getdata("trajectory.txt")
     path_str = gencode(traj)
     program = [PREFIX, path_str, SUFFIX]
     with open('robotcode.MOD', 'w') as f:

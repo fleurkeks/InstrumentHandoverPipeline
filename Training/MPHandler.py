@@ -3,7 +3,8 @@
 
 import numpy as np
 from pyquaternion import Quaternion
-from transforms3d.euler import (mat2euler, euler2quat, euler2mat, quat2mat)
+from transforms3d.euler import (quat2mat)
+import cv2
 
 #returns vector from p1 to p2 as an array
 def PointToVec(p1, p2):
@@ -76,7 +77,6 @@ def hand_quaternion(lm0, lm5, lm17):
             return Quaternion(1, 0, 0, 0)
     
 
-   
     #find the angle of rotation by finding the angle between original orientation and current orientation
     angle_of_rotation=angle_between_vectors(ogRot,dVec)
 
@@ -93,7 +93,8 @@ def quatToMatrix(q):
 def Matrix2vec(matrix):
     tvec = matrix[0:3, -1]
     R = matrix[0:3, 0:3]
-    rvec = mat2euler(R)
+    #ändra!
+    rvec = cv2.Rodrigues(R)
     return tvec, rvec
 
 def main():
