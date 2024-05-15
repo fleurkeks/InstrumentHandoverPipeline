@@ -56,7 +56,7 @@ def angle_between_vectors(v1, v2):
     return angle_rad
 
 #returns four quaternions describing the hands rotation
-def hand_quaternion(lm0, lm5, lm17):
+def land2quat(lm0, lm5, lm17):
     
     v1=PointToVec(lm0,lm5)
     v2=PointToVec(lm0,lm17)
@@ -91,28 +91,31 @@ def quatToMatrix(q):
     return quat2mat(q)
 
 
-#takes Translation matrix and expresses it in form of tvec and rvec
-def Matrix2vec(matrix):
-    tvec = matrix[0:3, -1]
-    R = matrix[0:3, 0:3]
-    rvec, _ = cv2.Rodrigues(R)
-    
+
+#functions used in logger
+def land2tvec(lm1, lm2, lm3):
+    #sets tvec to the centroid of all landmarks
+    tvec=centroid(lm1,lm2,lm3)
+
+    #calculates rotation as quaternions
+    quat=land2quat(lm1,lm2,lm3)
+    #switches from quaternions to a rotation matrix
+    rMat=quat2mat(quat)
+    #calculates the rVec from the rotation matrix
+    rvec, _ = cv2.Rodrigues(rMat)
+
     return tvec, rvec
+
+
+
 
 def main():
     # Example data
     lm0 = [0, 0, 0]
-    lm5 = [-1, 1, 0]
-    lm17 = [1, 1, 0]
+    lm5 = [-1, 0, 1]
+    lm17 = [1, 0, 1]
 
-    # Test centroid function
-    centroid_point = centroid(lm0, lm5, lm17)
-    #print("Centroid:", centroid_point)
-
-    # Test rotation_quaternion function
-    rotation = hand_quaternion(lm0, lm5, lm17)
-
-    Matrix2vec(quat2mat(rotation))
+    print(land2tvec(lm0,lm5,lm17))
 
     
 if __name__ == "__main__":
