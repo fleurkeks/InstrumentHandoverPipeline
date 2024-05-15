@@ -93,7 +93,6 @@ def quatToMatrix(q):
 def Matrix2vec(matrix):
     tvec = matrix[0:3, -1]
     R = matrix[0:3, 0:3]
-    #ändra!
     rvec = cv2.Rodrigues(R)
     return tvec, rvec
 
