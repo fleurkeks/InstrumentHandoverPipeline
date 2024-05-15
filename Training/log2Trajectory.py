@@ -4,8 +4,9 @@
 #(obs! in terms of hand2marker, because that is the format our robot uses)
 
 import numpy as np
-from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
+from transforms3d.euler import (mat2euler, euler2quat, euler2mat, mat2quat)
 from math import radians
+import cv2
 
 def create_matrix(rvec, tvec):
     if isinstance(rvec, list):
@@ -64,7 +65,8 @@ def getdata(filename):
                 dvecT=getvectors(T)[0]
                 rvecT=(getvectors(T)[1])
         
-                quatT=euler2quat(rvecT[0],rvecT[1],rvecT[2])
+                #converts rodrigues angles to a matrix, then the matrix to euler angles, then euler angles to quaternions
+                quatT=euler2quat(mat2euler(cv2.Rodrigues((rvecT[0],rvecT[1],rvecT[2]))))
     
                 data.append((int(frame), (dvecT, quatT)))
     
