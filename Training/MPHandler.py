@@ -51,34 +51,36 @@ def angle_between_vectors(v1, v2):
 
     cos_angle = dot_product / (magnitude1 * magnitude2)
 
-    angle_rad = np.arccos(cos_angle)
+    angle_rad = abs(np.arccos(cos_angle))
 
     return angle_rad
 
 #returns four quaternions describing the hands rotation
 def hand_quaternion(lm0, lm5, lm17):
     
-    #find the durrecnt dVec of the hand
-    dVec=dirVec(centroid(lm0,lm5,lm17))
-    print(dVec)
+    v1=PointToVec(lm0,lm5)
+    v2=PointToVec(lm0,lm17)
 
-    #in the original position the normal vector of the hand will be (0,-1,0)
-    #this is our initial position where the hand points straight upward
-    ogRot=np.array((0,0,1))
+    #normalen till handplan, lokal koordinater
+    n=np.cross(v1,v2)
 
-    if(are_antiparallel(ogRot,dVec)):
-        axis_of_rotation=(0,-1,0)
+    #find rotation relative to the z axis pointing, pointing away from cam, find rotation in cameras coordinate system
+    zAxis=np.array((0,0,1))
+
+    #check 
+    if(are_antiparallel(zAxis,n)):
+        axis_of_rotation=(1,0,0)
+        angle_of_rotation=np.pi
     
     #calculate the normal to the original dirVec of the hand and the current dirVec of the hand, that gives the axis of rotation
     else:
-        axis_of_rotation=np.cross(ogRot,dVec)
+        axis_of_rotation=np.cross(zAxis,n)
          #check if the axis of rotation is 0, that would mean no rotation has happened --> return identity quaternion
         if(is_null_vector(axis_of_rotation)):
             return Quaternion(1, 0, 0, 0)
+        #find the angle of rotation by finding the angle between original orientation and current orientation
+        angle_of_rotation=angle_between_vectors(zAxis,n)
     
-
-    #find the angle of rotation by finding the angle between original orientation and current orientation
-    angle_of_rotation=angle_between_vectors(ogRot,dVec)
 
     #using this we can easly calculate the rotation in quaternions
     q = Quaternion(axis = axis_of_rotation, angle = angle_of_rotation)
@@ -93,7 +95,8 @@ def quatToMatrix(q):
 def Matrix2vec(matrix):
     tvec = matrix[0:3, -1]
     R = matrix[0:3, 0:3]
-    rvec = cv2.Rodrigues(R)
+    rvec, _ = cv2.Rodrigues(R)
+    
     return tvec, rvec
 
 def main():
@@ -104,11 +107,12 @@ def main():
 
     # Test centroid function
     centroid_point = centroid(lm0, lm5, lm17)
-    print("Centroid:", centroid_point)
+    #print("Centroid:", centroid_point)
 
     # Test rotation_quaternion function
     rotation = hand_quaternion(lm0, lm5, lm17)
-    print("Rotation quaternion:", rotation)
+
+    Matrix2vec(quat2mat(rotation))
 
     
 if __name__ == "__main__":

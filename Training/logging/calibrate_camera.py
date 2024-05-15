@@ -18,7 +18,7 @@ objp = np.zeros((1, CHECKERBOARD[0] * CHECKERBOARD[1], 3), np.float32)
 objp[0,:,:2] = np.mgrid[0:CHECKERBOARD[0], 0:CHECKERBOARD[1]].T.reshape(-1, 2) * square_size
 prev_img_shape = None
 # Extracting path of individual image stored in a given directory
-images = glob.glob('./calibration_pictures/*')
+images = glob.glob('./calibration_pictures/chessboard-L*.png')
 for fname in images:
     img = cv2.imread(fname)
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -43,7 +43,8 @@ for fname in images:
         imgpoints.append(corners2)
         # Draw and display the corners
         img = cv2.drawChessboardCorners(img, CHECKERBOARD, corners2, ret)
-    cv2.imshow('img',img)
+    halfimg = cv2.resize(img, (0, 0), fx = 0.25, fy = 0.25)
+    cv2.imshow('img',halfimg)
     cv2.waitKey(1)
     
  

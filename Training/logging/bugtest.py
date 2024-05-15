@@ -20,35 +20,33 @@ def project(rvector, tvector, img, show = True):
     img = draw(img, imgpts[0], imgpts[1:])
     return img
 
-num_frame = 22
+num_frame = 84
 
-log = logread.processLogFile("handover1.txt")
+log = logread.processLogFile("RotationTopDown-log.txt")
 
-cap = cv2.VideoCapture("training_videos/CameraLeft1.avi")
+cap = cv2.VideoCapture("handover_videos/RotationTopDownLeft.avi")
 
 frame_coords = log[num_frame-1]
 
 cap.set(cv2.CAP_PROP_POS_FRAMES, num_frame)
 res, img = cap.read()
 
-#rvec_hand = np.array([frame_coords["hand_rvec0"], frame_coords["hand_rvec1"], frame_coords["hand_rvec2"]])
-#tvec_hand = np.array([frame_coords["hand_tvec0"], frame_coords["hand_tvec1"], frame_coords["hand_tvec2"]])
-
 rvec_hand = np.array([frame_coords["hand_rvec0"], frame_coords["hand_rvec1"], frame_coords["hand_rvec2"]])
-tvec_hand = np.array([frame_coords["hand_tvec2"], frame_coords["hand_tvec1"], frame_coords["hand_tvec0"]])
+tvec_hand = np.array([frame_coords["hand_tvec0"]*1000, frame_coords["hand_tvec1"]*1000, frame_coords["hand_tvec2"]*1000])
 
+rvec_aruco = np.array([frame_coords["aruco_rvec0"], frame_coords["aruco_rvec1"], frame_coords["aruco_rvec2"]])
+tvec_aruco = np.array([frame_coords["aruco_tvec0"]*1000, frame_coords["aruco_tvec1"]*1000, frame_coords["aruco_tvec2"]*1000])
 
-#rvec_aruco = np.array([frame_coords["aruco_rvec0"], frame_coords["aruco_rvec1"], frame_coords["aruco_rvec2"]])
-#tvec_aruco = np.array([frame_coords["aruco_tvec0"], frame_coords["aruco_tvec1"], frame_coords["aruco_tvec2"]])
-
-rvec_aruco = np.array([0.0, 0.0, 0.0])
-tvec_aruco = np.array([0.0, 0.0, 100.0])
+#rvec_aruco = np.array([0.0, 0.0, 0.0])
+#tvec_aruco = np.array([0.0, 0.0, 1000.0])
 
 
 #print(rvec_aruco, tvec_aruco)
+
+#img = project(rvec_hand, tvec_hand, img)
 img = project(rvec_aruco, tvec_aruco, img)
 
 
-half = cv2.resize(img, (0, 0), fx = 0.25, fy = 0.25)
+half = cv2.resize(img, (0, 0), fx = 0.5, fy = 0.5)
 cv2.imshow('img',half)
 cv2.waitKey(0)
