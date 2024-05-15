@@ -60,7 +60,7 @@ def hand_quaternion(lm0, lm5, lm17):
     
     #find the durrecnt dVec of the hand
     dVec=dirVec(centroid(lm0,lm5,lm17))
-    print(dVec)
+    #print(dVec)
 
     #in the original position the normal vector of the hand will be (0,-1,0)
     #this is our initial position where the hand points straight upward
@@ -93,7 +93,8 @@ def quatToMatrix(q):
 def Matrix2vec(matrix):
     tvec = matrix[0:3, -1]
     R = matrix[0:3, 0:3]
-    rvec = cv2.Rodrigues(R)
+    rvec, _ = cv2.Rodrigues(R)
+    
     return tvec, rvec
 
 def main():
@@ -104,11 +105,12 @@ def main():
 
     # Test centroid function
     centroid_point = centroid(lm0, lm5, lm17)
-    print("Centroid:", centroid_point)
+    #print("Centroid:", centroid_point)
 
     # Test rotation_quaternion function
     rotation = hand_quaternion(lm0, lm5, lm17)
-    print("Rotation quaternion:", rotation)
+
+    Matrix2vec(quat2mat(rotation))
 
     
 if __name__ == "__main__":
