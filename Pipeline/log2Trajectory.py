@@ -4,7 +4,7 @@
 #(obs! in terms of hand2marker, because that is the format our robot uses)
 
 import numpy as np
-from transforms3d.euler import (mat2euler, euler2quat, euler2mat, mat2quat)
+from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
 from math import radians
 import cv2
 
@@ -66,8 +66,10 @@ def getdata(filename):
                 rvecT=(getvectors(T)[1])
         
                 #converts rodrigues angles to a matrix, then the matrix to euler angles, then euler angles to quaternions
-                quatT=euler2quat(mat2euler(cv2.Rodrigues((rvecT[0],rvecT[1],rvecT[2]))))
-    
+                R, _ =cv2.Rodrigues((rvecT[0],rvecT[1],rvecT[2]))
+                Euler=mat2euler(R)
+                quatT=euler2quat(Euler[0],Euler[1],Euler[2])
+
                 data.append((int(frame), (dvecT, quatT)))
     
     return data
@@ -75,8 +77,8 @@ def getdata(filename):
 
 
 def main():
-    traj = getdata("Training/test.txt")
-    with open('trajectory.txt', 'w') as f:
+    traj = getdata("log4.txt")
+    with open('traj4.txt', 'w') as f:
         for frame_nbr, item in traj:
             line = f"{frame_nbr} {' '.join(map(str, item[0]))} {' '.join(map(str, item[1]))}\n"
             f.write(line)

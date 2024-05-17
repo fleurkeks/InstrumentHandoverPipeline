@@ -23,7 +23,7 @@ def average_points(point1, point2, point3):
 
 def getdata(filename):
     
-    data = []
+    smoothed = []
     data_points=[]
     with open(filename) as fn:
         lines = fn.readlines()
@@ -45,17 +45,17 @@ def getdata(filename):
         quatMat = np.row_stack((data_points[i-2][2],data_points[i-1][2],data_points[i][2]))
         #quatMat = np.row_stack((np.array(data_points[i-2][2]), np.array(data_points[i-1][2]), np.array(data_points[i][2])))
         meanQuat=averageQuaternion.averageQuaternions(quatMat)
-        data.append((int(frame), (meanPos, meanQuat)))
+        smoothed.append((int(frame), (meanPos, meanQuat)))
 
-    return data
+    return smoothed
 
 
 
 
 def main():
     
-    traj = getdata("trajectory.txt")
-    with open('smoothed.txt', 'w') as f:
+    traj = getdata("traj4.txt")
+    with open('smoothed4.txt', 'w') as f:
         for frame_nbr, item in traj:
             line = f"{frame_nbr} {' '.join(map(str, item[0]))} {' '.join(map(str, item[1]))}\n"
             f.write(line)

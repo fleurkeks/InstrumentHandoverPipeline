@@ -418,7 +418,6 @@ with open(LOG, 'w+') as logfile:
             filteredImg = np.uint8(filteredImg)
             #cv2.imshow('Disparity Map', filteredImg)
             disp= ((disp.astype(np.float32)/ 16)-min_disp)/num_disp # Calculation allowing us to have 0 for the most distant object able to detect
-
         ##    # Resize the image for faster executions
         ##    dispR= cv2.resize(disp,None,fx=0.7, fy=0.7, interpolation = cv2.INTER_AREA)
 

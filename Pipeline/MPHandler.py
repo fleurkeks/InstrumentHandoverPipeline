@@ -86,10 +86,6 @@ def land2quat(lm0, lm5, lm17):
     q = Quaternion(axis = axis_of_rotation, angle = angle_of_rotation)
     return q
 
-#goes from quaternion represenation to a translation matrix
-def quatToMatrix(q):
-    return quat2mat(q)
-
 
 
 #functions used in logger
@@ -103,6 +99,7 @@ def land2tvec(lm1, lm2, lm3):
     rMat=quat2mat(quat)
     #calculates the rVec from the rotation matrix
     rvec, _ = cv2.Rodrigues(rMat)
+    rvec=(rvec[0], rvec[1], rvec[2])
 
     return tvec, rvec
 

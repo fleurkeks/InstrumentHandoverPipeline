@@ -63,10 +63,10 @@ def gencode(traj):
     return s
 
 def main():
-    traj = getdata("trajectory.txt")
+    traj = getdata("smoothed.txt")
     path_str = gencode(traj)
     program = [PREFIX, path_str, SUFFIX]
-    with open('robotcode.MOD', 'w') as f:
+    with open('traj1smoothed.MOD', 'w') as f:
         code_str = '\n'.join(program)
         f.write(code_str)
     
