@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import logread
 
-data = logread.processLogFile("log1.txt")
+data = logread.processLogFile("Simple-log.txt")
 
 aruco_Xpositions = []
 aruco_Ypositions = []

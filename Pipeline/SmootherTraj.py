@@ -30,7 +30,7 @@ def getdata(filename):
         for line in lines:
             
             line = line.strip().split()
-            frame=line[0]
+            frame=float(line[0])
             displacement = list(map(float, line[1:4]))
             orientation = list(map(float, line[4:]))
             data_points.append((int(frame), displacement, orientation))
@@ -54,8 +54,8 @@ def getdata(filename):
 
 def main():
     
-    traj = getdata("traj4.txt")
-    with open('smoothed4.txt', 'w') as f:
+    traj = getdata("traj1.txt")
+    with open('smoothed1.txt', 'w') as f:
         for frame_nbr, item in traj:
             line = f"{frame_nbr} {' '.join(map(str, item[0]))} {' '.join(map(str, item[1]))}\n"
             f.write(line)
