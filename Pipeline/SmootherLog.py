@@ -45,9 +45,10 @@ def getdata(filename, distance_threshold):
                 EulerHand = mat2euler(RHand)
                 quatHand = euler2quat(EulerHand[0], EulerHand[1], EulerHand[2])
 
-               
                 if len(data_points) == 0 or len(data_points) == 1 or get_distance(dVecMarker, data_points[-1][1]) <= distance_threshold:
                     data_points.append((int(frame), dVecMarker, quatMarker, dVecHand, quatHand))
+
+                
 
     # Apply rolling average with window size 3
     for i in range(2, len(data_points)):
@@ -71,9 +72,9 @@ def getdata(filename, distance_threshold):
     return smoothed
 
 def main():
-    distance_threshold = 130.0  # You can change this threshold distance as needed
-    traj = getdata("Simple-log.txt", distance_threshold)
-    with open('Simple-log-smoothed.txt', 'w') as f:
+    distance_threshold = 100.0  # You can change this threshold distance as needed
+    traj = getdata("RotationTopDown-log.txt", distance_threshold)
+    with open('RotationTopDown-logsmoothed.txt', 'w') as f:
         for item in traj:
             frame_nbr = item[0]
             MarkerMeanPos = item[1]

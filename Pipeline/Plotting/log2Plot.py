@@ -5,8 +5,9 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import logread
 
-data = logread.processLogFile("Simple-log-smoothed.txt")
+data = logread.processLogFile("Arching-log-smoothed.txt")
 title='3D Plot of Coordinates over Time'
+filename="RotationTopDown-log-smoothed.png"
 
 aruco_Xpositions = []
 aruco_Ypositions = []
@@ -55,5 +56,6 @@ ax.set_title(title)
 
 # Add legend
 ax.legend()
+#plt.savefig(filename)
 
 plt.show()
