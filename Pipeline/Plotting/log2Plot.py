@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import logread
 
-data = logread.processLogFile("RotationTopDown-log.txt")
+data = logread.processLogFile("ArchingHandover-log.txt")
 
 aruco_Xpositions = []
 aruco_Ypositions = []
@@ -43,13 +43,14 @@ ax.plot(aruco_positions[0], aruco_positions[1], aruco_positions[2], marker='o', 
 
 # Plot hand trajectory
 ax.plot(hand_positions[0], hand_positions[1], hand_positions[2], marker='o', label='hand')
+ax.invert_zaxis()
 
 # Set labels
 ax.set_xlabel('X')
 ax.set_ylabel('Z')
 ax.set_zlabel('Y')
 ax.set_title('3D Plot of Coordinates over Time')
-ax.invert_zaxis
+
 
 # Add legend
 ax.legend()
