@@ -5,7 +5,9 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import logread
 
-data = logread.processLogFile("Simple-log.txt")
+data = logread.processLogFile("Simple-log-smoothed.txt")
+title="3D Plot of Coordinates over Time"
+filename="simple-log-smoothed.png"
 
 aruco_Xpositions = []
 aruco_Ypositions = []
@@ -31,8 +33,6 @@ for frame in data:
 aruco_positions = np.array([aruco_Xpositions, aruco_Ypositions, aruco_Zpositions])
 hand_positions = np.array([hand_Xpositions, hand_Ypositions, hand_Zpositions])
 
-#aruco_positions = np.array([[data[514]["aruco_tvec0"], data[515]["aruco_tvec0"], data[516]["aruco_tvec0"]], [data[514]["aruco_tvec1"], data[515]["aruco_tvec1"], data[516]["aruco_tvec1"]], [data[514]["aruco_tvec2"], data[515]["aruco_tvec2"], data[516]["aruco_tvec2"]]]) 
-#hand_positions = np.array([[data[514]["hand_tvec0"], data[515]["hand_tvec0"], data[516]["hand_tvec0"]], [data[514]["hand_tvec1"], data[515]["hand_tvec1"], data[516]["hand_tvec1"]], [data[514]["hand_tvec2"], data[515]["hand_tvec2"], data[516]["hand_tvec2"]]])  # Object 2 positions at different time points
 
 # Create 3D plot
 fig = plt.figure()
@@ -48,9 +48,14 @@ ax.plot(hand_positions[0], hand_positions[1], hand_positions[2], marker='o', lab
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
-ax.set_title('3D Plot of Coordinates over Time')
 
-# Add legend
+##################change title##################
+ax.set_title(title)
+
+
 ax.legend()
+
+#####################chan
+plt.savefig(filename)
 
 plt.show()
