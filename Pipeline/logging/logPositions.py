@@ -1,6 +1,11 @@
 #here we log the positions of recorded trainings-data
 #we output a file containing, for each frame, the position and rotation or the aruco markers and the hand as tvecs and rvecs
 
+import sys         
+ 
+# appending the directory of mod.py 
+# in the sys.path list
+sys.path.append('C:/Users/Microcrew/Documents/Examensarbete/LeaRepo/InstrumentHandoverPipeline/Training')
 
 # Package importation
 import numpy as np
@@ -18,8 +23,8 @@ from scipy.spatial.transform import Rotation as R
 from transforms3d.affines import compose
 import math
 import warnings
-from Training.logging.cad_model import model, model_corners
-import Training.logging.camera_data as camera_data
+from cad_model import model, model_corners
+import camera_data as camera_data
 import MPHandler
 
 
@@ -27,7 +32,7 @@ import MPHandler
 kernel= np.ones((3,3),np.uint8)
 
 #ArUco marker stuff
-markerlength = 10
+markerlength = 9
 camera_matrix, dist_coeffs = camera_data.sony_data()
 
 aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)#Aruco marker size 4x4 (+ border)
@@ -36,16 +41,16 @@ detector = aruco.ArucoDetector(aruco_dict, parameters)
 axis = np.float32([[0, 0, 0],[3,0,0], [0,3,0], [0,0,3]]).reshape(-1,3)
 
 #Logfile name
-LOG = './handover1.txt'
+LOG = './testlog.txt'
 #Video names
-FILE_LEFT = './training_videos/CameraLeft5Handover1.avi'
-FILE_RIGHT = './training_videos/CameraRight5Handover1.avi'
+FILE_LEFT = './handover_videos/RotationTopDownLeft.avi'
+FILE_RIGHT = './handover_videos/RotationTopDownRight.avi'
 
 #integer means webcam of that name (live feed), change to FILE_LEFT and FILE_RIGHT to use the files specified above. (1,2 for live cameras)
 LEFT_CAMERA = FILE_LEFT 
 RIGHT_CAMERA = FILE_RIGHT
 
-NUM_CAL_PICS = 50
+NUM_CAL_PICS = 34
 
 #Which landmarks on the hand do we want to use
 LANDMARK_A = 0
@@ -97,39 +102,41 @@ def get_coordinates_for_plane(hand_landmarks, image_height, image_width, points3
 
     #CHECK HEREEEEE
     #Since Mediapipe gives x,y coordinates on a scale of 0 to 1, we need to multiply the coordinate value with the width and height of the image to get the pixel coordinate.
-    x_a_pixel, y_a_pixel = int((1 - landmark_a.x) * image_width), int(landmark_a.y * image_height)## The coordinate would for some reason be mirrored when translating to the 3d point view, so I just use the 1 - x to flip the coordinate
+    x_a_pixel, y_a_pixel = int(landmark_a.x * image_width), int(landmark_a.y * image_height)## The coordinate would for some reason be mirrored when translating to the 3d point view, so I just use the 1 - x to flip the coordinate
 
-    x_b_pixel, y_b_pixel = int((1 - landmark_b.x) * image_width), int(landmark_b.y * image_height)
+    x_b_pixel, y_b_pixel = int(landmark_b.x * image_width), int(landmark_b.y * image_height)
 
-    x_c_pixel, y_c_pixel = int((1 - landmark_c.x) * image_width), int(landmark_c.y * image_height)
+    x_c_pixel, y_c_pixel = int(landmark_c.x * image_width), int(landmark_c.y * image_height)
 
     #print(points3D.shape, y_a_pixel, x_a_pixel)
 
      #Sometimes GMPH will predict a hand landmark is outside the frame, so just want to handle those edge cases
-    if x_a_pixel > 1279:
-        y_a_pixel = 1279
-    if x_b_pixel > 1279:
-        y_b_pixel = 1279
-    if x_c_pixel > 1279: 
-        y_c_pixel = 1279
-    if y_a_pixel > 719:
-        y_a_pixel = 719
-    if y_b_pixel > 719:
-        y_b_pixel = 719
-    if y_c_pixel > 719: 
-        y_c_pixel = 719
+    if x_a_pixel > image_width-1:
+        y_a_pixel = image_width-1
+    if x_b_pixel > image_width-1:
+        y_b_pixel = image_width-1
+    if x_c_pixel > image_width-1: 
+        y_c_pixel = image_width-1
+    if y_a_pixel > image_height-1:
+        y_a_pixel = image_height-1
+    if y_b_pixel > image_height-1:
+        y_b_pixel = image_height-1
+    if y_c_pixel > image_height-1: 
+        y_c_pixel = image_height-1
     
 
     x_a, y_a, z_a = points3D[y_a_pixel, x_a_pixel, 0], points3D[y_a_pixel, x_a_pixel, 1], points3D[y_a_pixel, x_a_pixel, 2]  
     x_b, y_b, z_b = points3D[y_b_pixel, x_b_pixel, 0], points3D[y_b_pixel, x_b_pixel, 1], points3D[y_b_pixel, x_b_pixel, 2]
     x_c, y_c, z_c = points3D[y_c_pixel, x_c_pixel, 0], points3D[y_c_pixel, x_c_pixel, 1], points3D[y_c_pixel, x_c_pixel, 2]
+
+    
     
     return_dict = {
         LANDMARK_A : (x_a, y_a, z_a),
         LANDMARK_B : (x_b, y_b, z_b),
         LANDMARK_C : (x_c, y_c, z_c)
     } 
-
+    print(return_dict)
     return return_dict
 
 def process_frame_aruco(frame, logfile, width, height):
@@ -172,8 +179,12 @@ def process_frame_aruco(frame, logfile, width, height):
         assert(max(pts3d.shape) == 4 * n)
         assert(max(corners.shape) == 4* n)
         
-        ret = cv2.solvePnP(pts3d, corners, camera_matrix, dist_coeffs, rvec, tvec, useExtrinsicGuess = True)
+        ret = cv2.solvePnP(pts3d, corners, camera_matrix, dist_coeffs, rvec, tvec)
         proj, jac = cv2.projectPoints(axis, rvec, tvec, camera_matrix, dist_coeffs)
+        marked = drawcenter(marked, proj)
+        marked_half = cv2.resize(marked, (0, 0), fx = 0.25, fy = 0.25)
+        cv2.imshow("marked", marked_half)
+
         #positions.append((rvec, tvec))
         logfile.write('{} {} {} {} {} {} {} '.format("aruco", rvec[0], rvec[1], rvec[2], tvec[0]/1000, tvec[1]/1000, tvec[2]/1000))
         #img = drawcenter(marked, proj)
@@ -192,8 +203,6 @@ def process_frame_aruco(frame, logfile, width, height):
 
 def process_frame_gmph(image, logfile, points3D):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    # Flip on horizontal (it is possible this could be removed since I flip it back later, but I havent tested if its vital for MP so I've left it for now)
-    image = cv2.flip(image, 1)
     # Set flag
     image.flags.writeable = False
     # Detections
@@ -204,6 +213,8 @@ def process_frame_gmph(image, logfile, points3D):
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     # Detections
     #print(results)
+    
+
     # Rendering results
     if results.multi_hand_landmarks:
         for num, hand in enumerate(results.multi_hand_landmarks):
@@ -211,11 +222,10 @@ def process_frame_gmph(image, logfile, points3D):
                                     mp_drawing.DrawingSpec(color=(22, 22, 250), thickness=2, circle_radius=4),
                                     mp_drawing.DrawingSpec(color=(20, 250, 255), thickness=2, circle_radius=2),
                                         )
-    #Reverse flip
-    image = cv2.flip(image, 1)
 
 
     """
+
     return_dict = {
         LANDMARK_A : (x_a, y_a, z_a),
         LANDMARK_B : (x_b, y_b, z_b),
@@ -229,10 +239,11 @@ def process_frame_gmph(image, logfile, points3D):
             lma = [cfp[LANDMARK_A][0], cfp[LANDMARK_A][1], cfp[LANDMARK_A][2]]
             lmb = [cfp[LANDMARK_B][0], cfp[LANDMARK_B][1], cfp[LANDMARK_B][2]]
             lmc = [cfp[LANDMARK_C][0], cfp[LANDMARK_C][1], cfp[LANDMARK_C][2]]
-            quaternion = MPHandler.hand_quaternion(lma, lmb, lmc)
-            qMatrix = MPHandler.quatToMatrix(quaternion)
-            tvec, rvec = MPHandler.Matrix2vec(qMatrix)
-            logfile.write('{} {} {} {} {} {} {} '.format("hand", rvec[0], rvec[1], rvec[2], tvec[0], tvec[1], tvec[2]))
+            tvec, rvec = MPHandler.land2tvec(lma, lmb, lmc)
+            #quaternion = MPHandler.hand_quaternion(lma, lmb, lmc)
+            #qMatrix = MPHandler.quatToMatrix(quaternion)
+            #tvec, rvec = MPHandler.Matrix2vec(qMatrix)
+            logfile.write('{} {} {} {} {} {} {} '.format("hand", rvec[0][0], rvec[1][0], rvec[2][0], tvec[0]+0.075, tvec[1], tvec[2]))
             #logfile.write('{} {} {} {} {} {} {} {} {} {} {} {} '.format( LANDMARK_A, cfp[0][0], cfp[0][1], cfp[0][2], LANDMARK_B, cfp[1][0], cfp[1][1], cfp[1][3], LANDMARK_C, cfp[2][0], cfp[2][1], cfp[2][3]))
     return image
 
@@ -334,16 +345,16 @@ Right_Stereo_Map= cv2.initUndistortRectifyMap(MRS, dRS, RR, PR,
 #*******************************************
 
 # Create StereoSGBM and prepare all parameters
-window_size = 3
-min_disp = 2
+window_size = 5
+min_disp = 3
 num_disp = 130-min_disp
 stereo = cv2.StereoSGBM_create(minDisparity = min_disp,
     numDisparities = num_disp,
     blockSize = window_size,
-    uniquenessRatio = 10,
-    speckleWindowSize = 100,
-    speckleRange = 32,
-    disp12MaxDiff = 5,
+    uniquenessRatio = 15,
+    speckleWindowSize = 200,
+    speckleRange = 64,
+    disp12MaxDiff = 10,
     P1 = 8*3*window_size**2,
     P2 = 32*3*window_size**2)
 
@@ -364,8 +375,8 @@ wls_filter.setSigmaColor(sigma)
 #*************************************
 
 # Call the two cameras
-camR= cv2.VideoCapture(LEFT_CAMERA) 
-camL= cv2.VideoCapture(RIGHT_CAMERA)
+camL= cv2.VideoCapture(LEFT_CAMERA) 
+camR= cv2.VideoCapture(RIGHT_CAMERA)
 
 ## INITIATE MEDIAPIPE
 
@@ -414,7 +425,7 @@ with open(LOG, 'w+') as logfile:
 
             # Using the WLS filter
             filteredImg= wls_filter.filter(dispL,grayL,None,dispR)
-            filteredImg = cv2.normalize(src=filteredImg, dst=filteredImg, beta=0, alpha=255, norm_type=cv2.NORM_MINMAX);
+            filteredImg = cv2.normalize(src=filteredImg, dst=filteredImg, beta=0, alpha=255, norm_type=cv2.NORM_MINMAX)
             filteredImg = np.uint8(filteredImg)
             #cv2.imshow('Disparity Map', filteredImg)
             disp= ((disp.astype(np.float32)/ 16)-min_disp)/num_disp # Calculation allowing us to have 0 for the most distant object able to detect
@@ -429,6 +440,8 @@ with open(LOG, 'w+') as logfile:
             dispC= dispc.astype(np.uint8)                                   # Convert the type of the matrix from float32 to uint8, this way you can show the results with the function cv2.imshow()
             disp_Color= cv2.applyColorMap(dispC,cv2.COLORMAP_OCEAN)         # Change the Color of the Picture into an Ocean Color_Map
             filt_Color= cv2.applyColorMap(filteredImg,cv2.COLORMAP_OCEAN) 
+
+            
 
             #Start each row of the log with the frame number
             frameno = camL.get(cv2.CAP_PROP_POS_FRAMES)
@@ -446,13 +459,14 @@ with open(LOG, 'w+') as logfile:
             #cv2.imshow('Disparity', disp)
             #cv2.imshow('Closing',closing)
             #cv2.imshow('Color Depth',disp_Color)
-            cv2.imshow('Filtered Color Depth',filt_Color)
-            
-            cv2.imshow("camright", frameR)
-            cv2.imshow("camleft with handtracking", image)
+            filt_Color_half = cv2.resize(filt_Color, (0, 0), fx = 0.25, fy = 0.25)
+            cv2.imshow('Filtered Color Depth',filt_Color_half)
 
-            # Mouse click
-            cv2.setMouseCallback("Filtered Color Depth",coords_mouse_disp,filt_Color)
+            image_half = cv2.resize(image, (0, 0), fx = 0.25, fy = 0.25)
+
+            
+            #cv2.imshow("camright", frameR)
+            cv2.imshow("camleft with handtracking", image_half)
             
             # End the Programme
             if cv2.waitKey(1) & 0xFF == ord(' '):

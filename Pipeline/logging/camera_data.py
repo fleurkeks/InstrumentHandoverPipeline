@@ -1,6 +1,6 @@
 import yaml
 import numpy as np
-YAML_FILE = "data_sony.yaml"
+YAML_FILE = "data_sony_new.yaml"
 def sony_data():
     with open(YAML_FILE, 'r') as stream:
         data_loaded = yaml.safe_load(stream)
