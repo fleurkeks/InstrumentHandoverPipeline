@@ -95,8 +95,10 @@ def land2tvec(lm1, lm2, lm3):
 
     #calculates rotation as quaternions
     quat=land2quat(lm1,lm2,lm3)
+
     #switches from quaternions to a rotation matrix
     rMat=quat2mat(quat)
+
     #calculates the rVec from the rotation matrix
     rvec, _ = cv2.Rodrigues(rMat)
     rvec=(rvec[0], rvec[1], rvec[2])

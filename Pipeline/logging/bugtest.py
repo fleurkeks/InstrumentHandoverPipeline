@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import logread
+import Pipeline.Plotting.logread as logread
 import camera_data
 
 camera_matrix, dist_coeffs = camera_data.sony_data()

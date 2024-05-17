@@ -3,9 +3,9 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-import Training.logging.logread as logread
+import logread
 
-data = logread.processLogFile("./handover1.txt")
+data = logread.processLogFile("log1.txt")
 
 aruco_Xpositions = []
 aruco_Ypositions = []

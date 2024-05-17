@@ -58,6 +58,6 @@ def plot_vectors(transformations):
     plt.show()
 
 # Example usage
-file_name = 'smoothed4.txt'  # Change this to your file name
+file_name = 'traj1fix.txt'  # Change this to your file name
 transformations = read_transformations(file_name)
 plot_vectors(transformations)

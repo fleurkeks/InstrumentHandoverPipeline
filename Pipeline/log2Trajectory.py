@@ -16,21 +16,24 @@ def create_matrix(rvec, tvec):
         tvec = np.asarray(tvec)
         tvec = tvec.reshape(3, 1)
 
-    rotation_matrix = euler2mat(rvec[0], rvec[1], rvec[2])
+
+    R, _ =cv2.Rodrigues(rvec)
+   
     matrix = np.eye(4)
 
-    matrix[0:3, 0:3] = rotation_matrix
+    matrix[0:3, 0:3] = R
     matrix[0, 3] = tvec[0,0]
     matrix[1, 3] = tvec[1,0]
     matrix[2, 3] = tvec[2,0]
     matrix[3, 3] = 1.0
+    
     return matrix
 
 def getvectors(matrix):
     tvec = matrix[0:3, -1]
     
     R = matrix[0:3, 0:3]
-    rvec = mat2euler(R)
+    rvec, _ = cv2.Rodrigues(R)
     return tvec, rvec
 
 def getdata(filename):
@@ -50,23 +53,20 @@ def getdata(filename):
 
                 rVecHand=list(map(float, datapoint[9:12]))
                 dVecHand=list(map(float, datapoint[12:15]))
-                dVecHand[2]=dVecHand[2]/3
-
+                
                 #convert to matrix representation
                 markerMatrix=create_matrix(dVecMarker,rVecMarker)
                 handMatrix=create_matrix(dVecHand,rVecHand)
 
-                
-               
                 #calculate the diff
                 T=np.linalg.inv(handMatrix)@markerMatrix
                 
                 #convert to quaternion representation and append
                 dvecT=getvectors(T)[0]
-                rvecT=(getvectors(T)[1])
+                rvecT=getvectors(T)[1]
         
                 #converts rodrigues angles to a matrix, then the matrix to euler angles, then euler angles to quaternions
-                R, _ =cv2.Rodrigues((rvecT[0],rvecT[1],rvecT[2]))
+                R, _ =cv2.Rodrigues(rvecT)
                 Euler=mat2euler(R)
                 quatT=euler2quat(Euler[0],Euler[1],Euler[2])
 
@@ -77,8 +77,8 @@ def getdata(filename):
 
 
 def main():
-    traj = getdata("log4.txt")
-    with open('traj4.txt', 'w') as f:
+    traj = getdata("log1.txt")
+    with open('traj1fix.txt', 'w') as f:
         for frame_nbr, item in traj:
             line = f"{frame_nbr} {' '.join(map(str, item[0]))} {' '.join(map(str, item[1]))}\n"
             f.write(line)
