@@ -3,9 +3,9 @@ import numpy as np
 from transforms3d.euler import mat2euler, euler2quat, euler2mat, quat2mat
 import cv2
 
-# Read a trajectory from file
-# Trajectory format: (T.x T.y T.z T.q1 T.q2 T.q3 T.q4 )
-# The first three items give the displacement along x,y,z and the last 4 items give the orientation in quaternion
+# Read a log from file
+# Trajectory format: (frame "aruco" M.x M.y M.z M.r1 M.r2 M.r3 "hand" H.x H.y H.z H.r1 H.r2 H.r3  )
+# filters outliers
 # Takes a rolling average of three
 
 def average_points(point1, point2, point3):
@@ -72,8 +72,8 @@ def getdata(filename, distance_threshold):
 
 def main():
     distance_threshold = 110.0  # You can change this threshold distance as needed
-    traj = getdata("Simple-log.txt", distance_threshold)
-    with open('Simple-log-smoothed.txt', 'w') as f:
+    traj = getdata("Arching-log.txt", distance_threshold)
+    with open('Arching-smoothed.txt', 'w') as f:
         for item in traj:
             frame_nbr = item[0]
             MarkerMeanPos = item[1]
