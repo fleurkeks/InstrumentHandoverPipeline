@@ -55,7 +55,7 @@ ax.set_title(title)
 
 ax.legend()
 
-#####################chan
-plt.savefig(filename)
+#####################save###########
+#plt.savefig(filename)
 
 plt.show()
