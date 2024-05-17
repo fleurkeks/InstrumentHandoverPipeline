@@ -5,7 +5,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import logread
 
-data = logread.processLogFile("ArchingHandover-log.txt")
+data = logread.processLogFile("Simple-log-smoothed.txt")
+title='3D Plot of Coordinates over Time'
 
 aruco_Xpositions = []
 aruco_Ypositions = []
@@ -49,7 +50,7 @@ ax.invert_zaxis()
 ax.set_xlabel('X')
 ax.set_ylabel('Z')
 ax.set_zlabel('Y')
-ax.set_title('3D Plot of Coordinates over Time')
+ax.set_title(title)
 
 
 # Add legend
