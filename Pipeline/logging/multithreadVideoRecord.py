@@ -1,5 +1,16 @@
 import cv2
 import threading
+import os    
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+LOGGING_PATH = os.getenv("PROJECT_PATH") + "/Pipeline/logging"
+
+
+RESOLUTION = (3840, 2160)
+FPS = 30.0
 
 class camThread(threading.Thread):
     def __init__(self, previewName, camID):
@@ -14,7 +25,7 @@ def camRecord(previewName, camID):
     cv2.namedWindow(previewName)
     cam = cv2.VideoCapture(camID)
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter(previewName+'.avi', fourcc, 30.0, (3840, 2160))
+    out = cv2.VideoWriter(LOGGING_PATH + "/handover_videos/" + previewName+'.avi', fourcc, FPS, RESOLUTION)
     if cam.isOpened():  # try to get the first frame
         rval, frame = cam.read()
         print(frame.shape) 

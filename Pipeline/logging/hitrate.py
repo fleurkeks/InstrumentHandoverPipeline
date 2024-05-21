@@ -1,15 +1,17 @@
 import sys 
-sys.path.append('C:/Users/Microcrew/Documents/Examensarbete/FreshStart/InstrumentHandoverPipeline/Pipeline/Plotting')
+import os    
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+PIPELINE_PATH = os.getenv("PROJECT_PATH") + "/Pipeline"
+sys.path.append(PIPELINE_PATH + '/Plotting')
 
 import logread
 
-simple = logread.processLogFile("./Results/SimpleLog/Simple-log.txt")
-topDown = logread.processLogFile("./Results/RotationTopDown/RotationTopDown-log.txt")
-dwsd = logread.processLogFile("./Results/DiagonalWithStraightDepth/DiagonalWithStraightDepth-log.txt")
-dwad = logread.processLogFile("./Results/DiagonalWithArchingDepthLog/DiagonalWithArchingDepth-log.txt")
-arching = logread.processLogFile("./Results/ArchingLog/Arching-log.txt")
-
-allLogs = [simple,topDown,dwsd,dwad,arching]
+allLogs = []
+allLogs.append(logread.processLogFile(PIPELINE_PATH + "/logging/YOURLOG-log.txt")) #Append all your logfiles that you wish to get the hitrate of
 
 both_tot = 0
 hands_tot = 0

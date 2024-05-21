@@ -1,23 +1,27 @@
-import sys         
+import sys   
+import os    
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+PIPELINE_PATH = os.getenv("PROJECT_PATH") + "/Pipeline"
+LOGGING_PATH = PIPELINE_PATH + "/logging"
+
  
 # appending the directory of mod.py 
 # in the sys.path list
-sys.path.append('C:/Users/Microcrew/Documents/Examensarbete/LeaRepo/InstrumentHandoverPipeline/Training')
+sys.path.append(PIPELINE_PATH)
 
 # Package importation
 import numpy as np
 import cv2
 import cv2.aruco as aruco
-from sklearn.preprocessing import normalize
-import sksurgerycore.transforms.matrix as matrix
+#import sksurgerycore.transforms.matrix as matrix
 from transforms3d.affines import compose
 from transforms3d.euler import (euler2mat, mat2euler, euler2quat, quat2euler,
                      euler2axangle, axangle2euler, EulerFuncs)
-from mpl_toolkits.mplot3d import proj3d
-from scipy.spatial.transform import Rotation as R
 from transforms3d.affines import compose
-import math
-import warnings
 from cad_model import model, model_corners
 import camera_data as camera_data
 import MPHandler
@@ -37,13 +41,15 @@ detector = aruco.ArucoDetector(aruco_dict, parameters)
 axis = np.float32([[0, 0, 0],[3,0,0], [0,3,0], [0,0,3]]).reshape(-1,3)
 
 #Video names
-FILE_LEFT = './handover_videos/DiagonalWithStraightDepthLeft.avi'
-FILE_RIGHT = './handover_videos/DiagonalWithStraightDepthRight.avi'
+video_name = "Simple"
+FILE_LEFT = PIPELINE_PATH + '/logging/handover_videos/'+video_name+'Left.avi'
+FILE_RIGHT = PIPELINE_PATH + '/logging/handover_videos/'+video_name+'Right.avi'
 
 #integer means webcam of that name (live feed), change to FILE_LEFT and FILE_RIGHT to use the files specified above. (1,2 for live cameras)
 LEFT_CAMERA = FILE_LEFT 
 RIGHT_CAMERA = FILE_RIGHT
 
+#Number of calibration pictures
 NUM_CAL_PICS = 34
 
 #Which landmarks on the hand do we want to use
@@ -53,7 +59,7 @@ LANDMARK_C = 17
 
 BASELINE = 75 #Distance between cameras in mm
 
-LOG = './DiagonalWithStraightDepth-log.txt'
+LOG = PIPELINE_PATH + '/logging/'+video_name+'-log.txt'
 
 def calibrate_cameras(folderLocation):
 
@@ -97,8 +103,8 @@ def calibrate_cameras(folderLocation):
     dist_coeffR = distR.tolist()
     dist_coeffL = distL.tolist()
     data = {"camera_matrixR": camera_matrixR, "dist_coeffR": dist_coeffR, "camera_matrixL": camera_matrixL, "dist_coeffL": dist_coeffL}
-    fname = "data_sony_2cam.yaml"
-
+    fname = PIPELINE_PATH + "/logging/data_sony_2cam.yaml"
+    
     import yaml
     with open(fname, "w") as f:
         yaml.dump(data, f)
@@ -299,7 +305,7 @@ def drawcenter(img, imgpts): #Maj code
 
 
 def main():
-    #calibrate_cameras("./calibration_pictures")
+    #calibrate_cameras(PIPELINE_PATH + "/logging/calibration_pictures")    
 
     camera_matrixR, camera_matrixL, dist_coeffR, dist_coeffL = camera_data.sony_data_2cam()
 
@@ -315,6 +321,7 @@ def main():
         with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) as handsR: 
             with mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5) as handsL: 
                 while retR and retL:
+                    
                     retR, frameR= camR.read()
                     retL, frameL= camL.read()
                     frameno = camL.get(cv2.CAP_PROP_POS_FRAMES)
@@ -333,6 +340,8 @@ def main():
 
                     if cv2.waitKey(1) & 0xFF == ord(' '):
                         break
+
+    
 
     
 if __name__ == "__main__":

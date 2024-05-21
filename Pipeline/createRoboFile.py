@@ -1,5 +1,14 @@
 import numpy as np
 from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
+import os    
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+PIPELINE_PATH = os.getenv("PROJECT_PATH") + "/Pipeline"
+LOGGING_PATH = PIPELINE_PATH + "/logging"
+
 
 PREFIX = '''
 MODULE MainModule
@@ -63,10 +72,10 @@ def gencode(traj):
     return s
 
 def main():
-    traj = getdata("smoothed.txt")
+    traj = getdata(LOGGING_PATH + "/smoothed.txt")
     path_str = gencode(traj)
     program = [PREFIX, path_str, SUFFIX]
-    with open('traj1smoothed.MOD', 'w') as f:
+    with open(PIPELINE_PATH + '/traj1smoothed.MOD', 'w') as f:
         code_str = '\n'.join(program)
         f.write(code_str)
     

@@ -1,8 +1,16 @@
+import os
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+LOGGING_PATH = os.getenv("PROJECT_PATH") + "/Pipeline/logging"
+
 import yaml
 import numpy as np
 
 def sony_data():
-    YAML_FILE = "data_sony_new.yaml"
+    YAML_FILE = LOGGING_PATH + "/data_sony_new.yaml"
     with open(YAML_FILE, 'r') as stream:
         data_loaded = yaml.safe_load(stream)
         camera_matrix = np.array(data_loaded['camera_matrix'])
@@ -10,7 +18,7 @@ def sony_data():
     return camera_matrix, dist_coeffs
 
 def sony_data_2cam():
-    YAML_FILE = "data_sony_2cam.yaml"
+    YAML_FILE = LOGGING_PATH + "/data_sony_2cam.yaml"
     with open(YAML_FILE, 'r') as stream:
         data_loaded = yaml.safe_load(stream)
         camera_matrixR = np.array(data_loaded['camera_matrixR'])

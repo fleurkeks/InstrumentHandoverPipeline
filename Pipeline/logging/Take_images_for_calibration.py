@@ -8,6 +8,13 @@
 
 import numpy as np
 import cv2
+import os    
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+LOGGING_PATH = os.getenv("PROJECT_PATH") + "/Pipeline/logging"
 
 print('Starting the Calibration. Press and maintain the space bar to exit the script\n')
 print('Push (s) to save the image you want and push (c) to see next frame without saving the image')
@@ -52,8 +59,8 @@ while True:
         if cv2.waitKey(0) & 0xFF == ord('s'):   # Push "s" to save the images and "c" if you don't want to
             str_id_image= str(id_image)
             print('Images ' + str_id_image + ' saved for right and left cameras')
-            cv2.imwrite('chessboard-R'+str_id_image+'.png',frameR) # Save the image in the file where this Programm is located
-            cv2.imwrite('chessboard-L'+str_id_image+'.png',frameL)
+            cv2.imwrite(LOGGING_PATH + '/calibration_pictures/chessboard-R'+str_id_image+'.png',frameR) # Save the image in the file where this Programm is located
+            cv2.imwrite(LOGGING_PATH + '/calibration_pictures/chessboard-L'+str_id_image+'.png',frameL)
             id_image=id_image+1
         else:
             print('Images not saved')

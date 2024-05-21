@@ -6,7 +6,13 @@
 import averageQuaternion
 import numpy as np
 from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
+import os    
+from dotenv import find_dotenv, load_dotenv
 
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+PIPELINE_PATH = os.getenv("PROJECT_PATH") + "/Pipeline"
 
 #read a trajectory from file
 #trajectory format: (T.x T.y T.z T.q1 T.q2 T.q3 T.q4 )
@@ -54,7 +60,7 @@ def getdata(filename):
 
 def main():
     
-    traj = getdata("traj1.txt")
+    traj = getdata(PIPELINE_PATH + "/traj1.txt")
     with open('smoothed1.txt', 'w') as f:
         for frame_nbr, item in traj:
             line = f"{frame_nbr} {' '.join(map(str, item[0]))} {' '.join(map(str, item[1]))}\n"
