@@ -2,6 +2,14 @@ import averageQuaternion
 import numpy as np
 from transforms3d.euler import mat2euler, euler2quat, euler2mat, quat2mat
 import cv2
+import os    
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+PIPELINE_PATH = os.getenv("PROJECT_PATH") + "/Pipeline"
+LOGGING_PATH = PIPELINE_PATH + "/logging"
 
 # Read a log from file
 # Trajectory format: (frame "aruco" M.x M.y M.z M.r1 M.r2 M.r3 "hand" H.x H.y H.z H.r1 H.r2 H.r3  )
@@ -73,8 +81,8 @@ def getdata(filename, distance_threshold):
 
 def main():
     distance_threshold = 100.0  # You can change this threshold distance as needed
-    traj = getdata("RotationTopDown-log.txt", distance_threshold)
-    with open('RotationTopDown-logsmoothed.txt', 'w') as f:
+    traj = getdata(LOGGING_PATH + "/RotationTopDown-log.txt", distance_threshold)
+    with open(PIPELINE_PATH + '/RotationTopDown-logsmoothed.txt', 'w') as f:
         for item in traj:
             frame_nbr = item[0]
             MarkerMeanPos = item[1]

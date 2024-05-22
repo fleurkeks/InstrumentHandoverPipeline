@@ -1,8 +1,22 @@
+import sys   
+import os    
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+PIPELINE_PATH = os.getenv("PROJECT_PATH") + "/Pipeline"
+LOGGING_PATH = PIPELINE_PATH + "/logging"
+
+sys.path.append(PIPELINE_PATH + "/Plotting")
+
 import cv2
 import numpy as np
-import Pipeline.Plotting.logread as logread
+import logread as logread
 import camera_data
 import time
+
+
 
 camera_matrixR, camera_matrixL, dist_coeffR, dist_coeffL = camera_data.sony_data_2cam()
 
@@ -24,9 +38,11 @@ def project(rvector, tvector, img, show = True):
 #num_frame = 90
 
 speed = 10
-log = logread.processLogFile("RotationTopDown-log.txt")
 
-cap = cv2.VideoCapture("handover_videos/RotationTopDownLeft.avi")
+fname = "RotationTopDown"
+log = logread.processLogFile(LOGGING_PATH + "/" + fname + "-log.txt")
+
+cap = cv2.VideoCapture(LOGGING_PATH + "/handover_videos/" + fname + ".avi")
 
 #cap.set(cv2.CAP_PROP_POS_FRAMES, num_frame)
 

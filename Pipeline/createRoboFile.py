@@ -1,9 +1,6 @@
 import numpy as np
 from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
 
-#1,0,0,0 rakt up
-#0,1,0,0
-
 PREFIX = '''
 MODULE MainModule
 PERS tooldata Servo:=[TRUE,[[0,0,114.2],[1,0,0,0]],[0.215,[8.7,12.3,49.2],[1,0,0,0],0.00021,0.00024,0.00009]];
@@ -68,10 +65,10 @@ def gencode(traj):
     return s
 
 def main():
-    traj = getdata("Arching-log-smoothed.txt")
+    traj = getdata("smoothed.txt")
     path_str = gencode(traj)
     program = [PREFIX, path_str, SUFFIX]
-    with open('traj5.MOD', 'w') as f:
+    with open('traj1smoothed.MOD', 'w') as f:
         code_str = '\n'.join(program)
         f.write(code_str)
     

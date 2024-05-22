@@ -8,6 +8,14 @@ from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
 from transforms3d.quaternions import (mat2quat )
 from math import radians
 import cv2
+import os    
+from dotenv import find_dotenv, load_dotenv
+
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+PIPELINE_PATH = os.getenv("PROJECT_PATH") + "/Pipeline"
+LOGGING_PATH = PIPELINE_PATH + "/logging"
 
 def create_matrix(rvec, tvec):
     if isinstance(rvec, list):
@@ -78,9 +86,8 @@ def getdata(filename):
 
 
 def main():
-    
-    traj = getdata("Arching-log-smoothed.txt")
-    with open('archtraj.txt', 'w') as f:
+    traj = getdata("log1.txt")
+    with open('traj1fix.txt', 'w') as f:
         for frame_nbr, item in traj:
             line = f"{frame_nbr} {' '.join(map(str, item[0]))} {' '.join(map(str, item[1]))}\n"
             f.write(line)

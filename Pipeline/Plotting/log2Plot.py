@@ -4,10 +4,22 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import logread
+import sys
+import os    
+from dotenv import find_dotenv, load_dotenv
 
-data = logread.processLogFile("Arching-log-smoothed.txt")
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
+PIPELINE_PATH = os.getenv("PROJECT_PATH") + "/Pipeline"
+LOGGING_PATH = PIPELINE_PATH + "/logging"
+sys.path.append(PIPELINE_PATH + "/Plotting")
+
+
+
+data = logread.processLogFile(LOGGING_PATH + "/Arching-log-smoothed.txt")
 title='3D Plot of Coordinates over Time'
-filename="RotationTopDown-log-smoothed.png"
+filename= PIPELINE_PATH + "/Plotting/RotationTopDown-log-smoothed.png"
 
 aruco_Xpositions = []
 aruco_Ypositions = []
