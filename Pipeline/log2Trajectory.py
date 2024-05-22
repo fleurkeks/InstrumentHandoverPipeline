@@ -5,6 +5,7 @@
 
 import numpy as np
 from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
+from transforms3d.quaternions import (mat2quat )
 from math import radians
 import cv2
 
@@ -55,8 +56,8 @@ def getdata(filename):
                 dVecHand=list(map(float, datapoint[12:15]))
                 
                 #convert to matrix representation
-                markerMatrix=create_matrix(dVecMarker,rVecMarker)
-                handMatrix=create_matrix(dVecHand,rVecHand)
+                markerMatrix=create_matrix(rVecMarker,dVecMarker)
+                handMatrix=create_matrix(rVecHand,dVecHand)
 
                 #calculate the diff
                 T=np.linalg.inv(handMatrix)@markerMatrix
@@ -77,11 +78,15 @@ def getdata(filename):
 
 
 def main():
-    traj = getdata("log1.txt")
-    with open('traj1fix.txt', 'w') as f:
+    
+    traj = getdata("Arching-log-smoothed.txt")
+    with open('archtraj.txt', 'w') as f:
         for frame_nbr, item in traj:
             line = f"{frame_nbr} {' '.join(map(str, item[0]))} {' '.join(map(str, item[1]))}\n"
             f.write(line)
+            
+    
+
 
 
 if __name__ == "__main__":

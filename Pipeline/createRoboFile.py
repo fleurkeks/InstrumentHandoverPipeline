@@ -1,6 +1,9 @@
 import numpy as np
 from transforms3d.euler import (mat2euler, euler2quat, euler2mat)
 
+#1,0,0,0 rakt up
+#0,1,0,0
+
 PREFIX = '''
 MODULE MainModule
 PERS tooldata Servo:=[TRUE,[[0,0,114.2],[1,0,0,0]],[0.215,[8.7,12.3,49.2],[1,0,0,0],0.00021,0.00024,0.00009]];
@@ -50,10 +53,12 @@ def gencode(traj):
     motions = []
     for i, (tvec, q) in enumerate(traj):
         #data is converted into mm which the robot uses
-        x, y, z = 1000 * tvec[0],  1000 * tvec[1],  1000 * tvec[2] 
+        x, y, z = tvec[0], tvec[1],  tvec[2] 
+        q1, q2, q3, q4 = q[0],q[1],q[2],q[3]
+        #[{q1},{q2},{q3},{q4}]
         # Double check the order of the quaternion!!!
         # Change the elbow angle?
-        decl = f'VAR robtarget t{i} := [[{x}, {y}, {z}], [0, -1, 0, 0], [0,0,-1,4], [-96,9E+09,9E+09,9E+09,9E+09,9E+09]];'
+        decl = f'VAR robtarget t{i} := [[{x}, {y}, {z}], [0,1,0,0], [0,0,-1,4], [-96,9E+09,9E+09,9E+09,9E+09,9E+09]];'
         declarations.append(decl)
 
         #move linearly along vector + velocity + z1 om inom en mm far den gar vidare, blending + punkten som ska move (just nu gripper, kommer ändras till pincet, robotern
@@ -63,10 +68,10 @@ def gencode(traj):
     return s
 
 def main():
-    traj = getdata("smoothed.txt")
+    traj = getdata("Arching-log-smoothed.txt")
     path_str = gencode(traj)
     program = [PREFIX, path_str, SUFFIX]
-    with open('traj1smoothed.MOD', 'w') as f:
+    with open('traj5.MOD', 'w') as f:
         code_str = '\n'.join(program)
         f.write(code_str)
     
